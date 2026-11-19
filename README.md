@@ -32,10 +32,9 @@ The wider trading system uses the following technologies:
 
 ## Backend components
 
-The examples cover the path from broker and market-data inputs to normalized
-positions, portfolio calculations, typed API responses, and automated order
-execution. Particular attention is given to financial units, consistent valuation
-inputs, traceable results, and explicit handling of incomplete data.
+The examples cover middleware components that facilitate GUI accces to
+back-end services such as reference data and risk calculations. Each GUI has
+its own dedicated process with a REST API for communication.
 
 ## What is included
 
@@ -52,28 +51,27 @@ runtime configuration are outside the scope of this repository; see
 
 ## Portfolio risk analysis
 
-The risk package combines calculation modules with an application service and
-REST API. Its main areas include:
+The risk package is responsible for real-time risk updates, scenario analysis, 
+trade post-mortems, and factor hedging. It provides a REST API to the GUI while 
+using SQL for database retrieval. Some information may be retrieved directly 
+from the broker via a REST API.
+
+The main areas include:
 
 - **Position normalization and instrument terms.** Represent equities, ETFs,
-  mutual funds, options, and futures with signed quantities and explicit
-  contract economics. Keep liquidation value, notional exposure, and
-  delta-equivalent exposure distinct.
+  mutual funds, options, and futures in common economic terms such as
+  liquidation value, notional exposure, and delta-equivalent exposure distinct.
 - **Portfolio analytics.** Calculate exposures and option sensitivities, evaluate
   market scenarios, estimate weighted historical value at risk (VaR) and
   expected shortfall, fit factor exposures, and identify correlated risk groups.
-- **Option valuation and history.** Integrate Tian and QuantLib pricing paths,
-  resolve exact-contract historical observations, and track the evidence and
-  assumptions used in valuation.
+- **Option valuation and history.** Integrate options by obtaining IV / greeks
+- through options pricing calculations (Tian Trees and CRR).
 - **P&L reconstruction and attribution.** Reconstruct trade lifecycles from
-  transaction records, maintain signed inventories and FIFO lots, allocate fees,
-  and reconcile marked-value changes with cash flows and modeled drivers.
-- **Hedge research.** Assess selected positions, generate bounded candidate
-  sets, and compare proposed hedges with the existing portfolio using immutable
-  request-local positions. These calculations are for analysis and do not
-  submit orders.
-- **Operational state.** Persist alerts, strategy groups, transaction history,
-  option-price captures, and bounded cached results.
+  transaction records and reconcile marked-value changes with cash flows and
+  modeled drivers.
+- **Hedge research.** Assess risk on selected positions, provide hedging
+  recommendations, and evaluate the impact of candidate hedges.
+- **Operational state.** Data quality and transaction history auditing.
 
 The [Risk API documentation](algotrading/risk/api/README.md) describes its
 contracts and calculation behavior. The
