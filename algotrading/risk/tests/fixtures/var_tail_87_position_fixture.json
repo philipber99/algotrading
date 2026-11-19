@@ -1,0 +1,32 @@
+{
+  "fixture_id": "reported_var_tail_portfolio_2026_08_27_v1",
+  "analysis_as_of": "2026-08-27T16:00:00Z",
+  "requested_returns": 252,
+  "minimum_complete_scenarios": 126,
+  "eligible_position_count": 87,
+  "composition": {
+    "equities": 31,
+    "options_with_sql_marks": 47,
+    "options_without_sql_marks": 8,
+    "scc_etf_requiring_controlled_remote_daily_repair": 1
+  },
+  "excluded_cash_symbol": "SWVXX",
+  "reported_pre_remediation": {
+    "modeled_positions": 78,
+    "coverage_percent": 89.65517241379311,
+    "complete_intersection_dates": 1,
+    "unh_one_interval_contracts": [
+      "UNH261218C00500000",
+      "UNH261218P00500000"
+    ]
+  },
+  "generation_rules": {
+    "equity_symbols": "EQ00A through EQ30A",
+    "other_sql_option_roots": "O00 through O44",
+    "missing_option_roots": "M00 through M07",
+    "sql_option_observations": "Each O-root has the final 3 through 39 exchange sessions; both UNH contracts have the final two sessions",
+    "missing_option_observations": "No SQL or remote marks; use only calibrated same-root daily-option-price volatility factors",
+    "daily_prices": "100 + 0.8 times (((7 times index) modulo 19) minus 9) + 0.01 times index",
+    "option_marks": "4 + 0.01 times the deterministic exchange-session index"
+  }
+}
