@@ -84,14 +84,12 @@ The reference data package provides FastAPI routes and service adapters over the
 larger application's data providers and repositories. It includes:
 
 - Market status, exchange calendars, quotes, historical bars, and company events.
-- Canonical OCC option symbols, exact-contract quotes and history, contract
+- Option symbol lookup, exact-contract quotes and history, contract
   terms, option chains, and expiration calendars.
 - Risk-free curve inputs, historical curve queries, and futures contract
   specifications.
 - API contracts for company, sector, market-flow, and futures analytics backed
   by shared services in the larger application.
-- Bounded caches, duplicate-load suppression, persistent history coverage, and
-  lifecycle-managed calendar update workers.
 
 The [Reference Data API documentation](algotrading/refdata/api/README.md)
 contains the endpoint descriptions and integration settings.
@@ -101,32 +99,24 @@ contains the endpoint descriptions and integration settings.
 The options package covers collection, numerical analysis, durable history, and
 read-only services for options research. Its main areas include:
 
-- **Collection and publication.** Capture Schwab option chains, preserve raw
-  responses for recovery, normalize contracts and observations, and publish
-  completed snapshots to ClickHouse. Reconciliation recovers work from durable
-  records after interruptions.
+- **Collection and publication.** Capture option chains, normalize contracts
+  and observations, and publish completed snapshots to ClickHouse.
 - **Pricing and sensitivities.** Calculate implied volatility and Greeks using
   configurable American and European pricing routes. The numerical engines
   include Tian and Cox–Ross–Rubinstein (CRR) trees and Crank–Nicolson finite
   differences, with shared solver configuration and precision controls.
-- **Volatility surfaces.** Fit per-expiration smiles with SVI or PCHIP, generate
-  standardized surface nodes, and record butterfly and calendar arbitrage
-  diagnostics. Calculation definitions, attempts, and completion states identify
-  which results are available for downstream queries.
-- **Historical storage and maintenance.** Archive and verify raw history,
-  support resumable monthly compaction, and build immutable Parquet generations
-  for time-of-day analysis. Incremental and full builds publish an active
-  generation for readers.
+- **Volatility surfaces.** Fit per-expiration smiles with SVI and generate
+  standardized surface nodes.
+- **Historical storage and maintenance.** Archive history, support monthly
+  compaction of data. 
 - **Historical strategy profiles.** Query cached observations to normalize
-  option legs and compare time-of-day behavior across selected sessions,
-  including coverage diagnostics and bounded result caching.
+  option legs and compare time-of-day behavior across selected session.
 - **Multi-leg spread screening.** Generate and evaluate verticals, calendars,
   diagonals, butterflies, iron condors, and double calendars from a completed
   snapshot. Compare execution quality, scenario P&L, conditional probability
   estimates, and optional static delta hedges within configured work limits.
 - **Read-only API services.** Serve historical profiles and spread-screening
-  requests through FastAPI. Cache and screener initialization are independent,
-  allowing historical cache routes to remain available during a screener outage.
+  requests through FastAPI. 
 
 Screening probabilities depend on the scenario model and its assumptions.
 Screening and profile services provide research results and do not submit orders.
@@ -156,7 +146,7 @@ the broker orders used to carry it out. Its main areas include:
   updates to reconcile execution state.
 - **Persistence and reconciliation.** Maintain trade instructions, orders, and
   P&L records through cached MySQL-backed objects. Startup and shutdown checks
-  compare stored orders and trade state with broker orders and positions.
+  performs local/remote state reconciliation as an operational failsafe.
 - **Operational checks and reporting.** Check exposure thresholds, repeated
   cancellations or rejections, and excessive broker API calls. Generate
   post-trading reports covering P&L and open positions.
@@ -168,24 +158,6 @@ that advances trade instructions, submits or expires orders, and consumes
 broker updates. The included
 [TestBrokerInterface](algotrading/trading/TestBrokerInterface.py) simulates broker
 orders and fills for integrated testing, including partial-fill scenarios.
-
-## Engineering choices
-
-Several concerns recur throughout the implementation:
-
-- **Consistent snapshots.** Portfolio analyses bind to a snapshot and its
-  configuration so related calculations use the same position state.
-- **Explicit units.** Quantities, multipliers, dollar exposures, volatility
-  points, basis points, and time conventions are represented deliberately.
-- **Causal history.** Historical calculations respect observation availability
-  and exchange sessions, with checks against using future information.
-- **Visible data quality.** Results carry coverage, provenance, warnings, and
-  methodology identifiers. Missing inputs can produce an explicit
-  `insufficient_data` result instead of an apparently complete estimate.
-- **Bounded external work.** Provider requests, retries, concurrency, history
-  windows, response sizes, and cache growth have defined limits.
-- **Testable boundaries.** Calculation logic is separated from broker, provider,
-  database, and HTTP concerns so those boundaries can be exercised independently.
 
 ## Suggested reading
 
@@ -235,10 +207,4 @@ and market-data streams supplied by the full application.
 The options pipeline also requires ClickHouse, configured chain and reference-rate
 providers, and storage for archive and Parquet cache generations.
 
-The implementation uses Python, FastAPI, Pydantic, NumPy, pandas, HTTPX, SQLite,
-MySQL, ClickHouse, and PyArrow/Parquet, with adapters for option-pricing components. The package-level
-requirements files describe service-specific dependencies; they do not describe
-a standalone installation of the full application.
-
-The package READMEs retain details of the original integrated environment and
-provide additional context for reviewing the code.
+For further information, contact the repository owner.
