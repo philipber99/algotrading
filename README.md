@@ -58,7 +58,7 @@ from the broker via a REST API.
 
 The main areas include:
 
-- **Position normalization and instrument terms.** Represent equities, ETFs,
+- **Position normalization.** Represent equities, ETFs,
   mutual funds, options, and futures in common economic terms such as
   liquidation value, notional exposure, and delta-equivalent exposure distinct.
 - **Portfolio analytics.** Calculate exposures and option sensitivities, evaluate
